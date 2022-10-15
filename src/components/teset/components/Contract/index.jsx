@@ -126,8 +126,9 @@ export default function Contract({
         size="large"
         style={{ marginTop: 25, width: '100%' }}
         loading={false}
+        className="gap-3"
       >
-        {true ? contractDisplay : noContractDisplay}
+        <div className="flex flex-col gap-3">{true ? contractDisplay : noContractDisplay}</div>
       </Card>
     </div>
   )
