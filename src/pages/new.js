@@ -1,7 +1,8 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Header from "components/Header"
-import { Contract } from "components/teset/components"
+import FunctionForm from "components/teset/components/Contract/FunctionForm";
 import { useContractLoader, useContractReader, useDexEthPrice } from 'eth-hooks';
+import { Contract } from "ethers";
 import { useNetwork, useProvider, useSigner } from "wagmi";
 
 
@@ -580,17 +581,6 @@ const DAIABI = [
         type: "function",
     },
 ]
-const contractConfig = {
-    1: {
-        contracts: {
-            DAI: {
-                address: "0x6B175474E89094C44Da98b954EedeAC495271d0F",
-                abi: DAIABI,
-            },
-        },
-    },
-}
-
 
 
 const Main = () => {
@@ -598,40 +588,26 @@ const Main = () => {
     const { data: signer } = useSigner()
     const provider = useProvider({ chainId: 1 })
 
+    const address = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
+    const contract = new Contract(address, DAIABI, signer)
 
-    // const price = useExchangeEthPrice(targetNetwork, mainnetProvider, mainnetProviderPollingTime);
-    const price = 100
-
-    // If you want to bring in the mainnet DAI contract it would look like:
-    const mainnetContracts = useContractLoader(provider, contractConfig);
-
-    // If you want to call a function on a new block
-    // useOnBlock(mainnetProvider, () => {
-    //   console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`);
-    // });
-
-    // Then read your DAI balance like:
 
 
 
 
 
     console
-    return <div>mains
-        <Contract
-            name="DAI"
-            customContract={mainnetContracts && mainnetContracts.contracts && mainnetContracts.contracts.DAI}
-            signer={signer}
-            provider={provider}
-            address={"0x6B175474E89094C44Da98b954EedeAC495271d0F"}
-            blockExplorer="https://etherscan.io/"
-            contractConfig={contractConfig}
-            chainId={1}
-        />
-
-
-
+    return (<div>
+        {Object.entries(contract.interface.functions).map(([key, value]) => {
+            return <FunctionForm
+                key={key}
+                contract={contract}
+                name={value.name}
+                blockExplorer="https://etherscan.io/"
+                chainId={1}
+            />
+        })}
     </div>
-
+    )
 }
 

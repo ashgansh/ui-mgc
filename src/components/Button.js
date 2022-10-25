@@ -17,7 +17,7 @@ export const PrimaryButton = ({
             onClick={handleClick}
             disabled={disabled}
             className={classNames(
-                "inline-flex items-center rounded-md border border-transparent bg-primary-600",
+                "inline-flex items-center rounded-md border border-transparent bg-blue-600 text-white",
                 "px-3 py-2 text-sm font-medium leading-4 shadow-sm hover:opacity-90",
                 "disabled:opacity-60",
                 className

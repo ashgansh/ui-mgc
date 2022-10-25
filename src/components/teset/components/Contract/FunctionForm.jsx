@@ -4,6 +4,7 @@ import { Card } from 'components/Card'
 import { Label, Input } from 'components/Input'
 import React, { useState } from 'react'
 import Blockies from 'react-blockies'
+import { useForm } from 'react-hook-form'
 
 import { Transactor } from '../../helpers'
 import { tryToDisplay, tryToDisplayAsText } from './utils'
@@ -17,34 +18,51 @@ const getFunctionInputKey = (functionInfo, input, inputIndex) => {
 
 const isReadable = fn => fn.stateMutability === 'view' || fn.stateMutability === 'pure'
 
-export default function FunctionForm({ contractFunction, functionInfo, provider, gasPrice, triggerRefresh }) {
-  const inputs = functionInfo.inputs.map((input, inputIndex) => {
+export default function FunctionForm({ name, contract }) {
+  const functionInfo = contract.interface.getFunction(name)
+  const { register, handleSubmit, errors } = useForm()
+  console.log(functionInfo)
+  const onSubmit = async data => {
+    const params = []
+    Object.keys(data).forEach(key => {
+      params[key] = data[key]
+    })
+    console.log(params)
+    console.log(contract[name])
+
+    const res = await contract[name](...params)
+    console.log(res)
+  }
+  const inputs = functionInfo?.inputs.map((input, inputIndex) => {
     const key = getFunctionInputKey(functionInfo, input, inputIndex)
     if (input.type === 'bytes32') {
     } else if (input.type === 'bytes') {
     } else if (input.type === 'uint256') {
     } else if (input.type === 'address') {
     }
-    console.log(input)
 
     return (
       <div style={{ margin: 2 }} key={key}>
         <Label className="capitalize">{input.name ? input.type + ' ' + input.name : input.type}</Label>
-        <Input size="large" placeholder={input.name ? input.type + ' ' + input.name : input.type} autoComplete="off" />
+        <Input
+          size="large"
+          placeholder={input.name ? input.type + ' ' + input.name : input.type}
+          autoComplete="off"
+          {...register(String(inputIndex), { required: true })}
+        />
       </div>
     )
   })
-  const buttonIcon = isReadable(functionInfo) ? (
-    <PrimaryButton style={{ marginLeft: -32 }}>Read📡</PrimaryButton>
-  ) : (
-    <PrimaryButton style={{ marginLeft: -32 }}>Send💸</PrimaryButton>
-  )
+  const buttonIcon = isReadable(functionInfo) ? 'Read📡' : 'Send💸'
 
   return (
     <div>
       <Card>
         <h3 className="text-medium mb-3 text-xl capitalize">{functionInfo.name}</h3>
         <Col span={16}>{inputs}</Col>
+        <PrimaryButton type="submit" onClick={handleSubmit(onSubmit)}>
+          {buttonIcon}
+        </PrimaryButton>
       </Card>
     </div>
   )
