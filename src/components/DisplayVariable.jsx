@@ -1,8 +1,8 @@
-import { Button, Col, Divider, Row } from 'antd'
 import { Label } from 'components/Input'
 import React, { useCallback, useEffect, useState } from 'react'
+import { PrimaryButton } from './Button'
 
-import { tryToDisplay } from './utils'
+import { tryToDisplay } from './teset/components/Contract/utils'
 
 const DisplayVariable = ({ contractFunction, functionInfo, refreshRequired, triggerRefresh, blockExplorer }) => {
   const [variable, setVariable] = useState('')
@@ -24,15 +24,16 @@ const DisplayVariable = ({ contractFunction, functionInfo, refreshRequired, trig
   return (
     <div>
       <Label>{functionInfo.name}</Label>
-      <Col span={14}>
+      <div>
         <h2>{tryToDisplay(variable, false, blockExplorer)}</h2>
-      </Col>
-      <Col span={2}>
+      </div>
+      <div>
         <h2>
-          <Button type="link" onClick={refresh} icon="🔄" />
+          <PrimaryButton type="link" onClick={refresh}>
+            🔄
+          </PrimaryButton>
         </h2>
-      </Col>
-      <Divider />
+      </div>
     </div>
   )
 }

@@ -1,7 +1,6 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Header from "components/Header"
-import FunctionForm from "components/teset/components/Contract/FunctionForm";
-import { useContractLoader, useContractReader, useDexEthPrice } from 'eth-hooks';
+import FunctionForm from "components/FunctionForm";
 import { Contract } from "ethers";
 import { useNetwork, useProvider, useSigner } from "wagmi";
 

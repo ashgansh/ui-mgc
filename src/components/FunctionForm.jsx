@@ -1,13 +1,9 @@
-import { Col, Divider, Row, Tooltip } from 'antd'
 import { PrimaryButton } from 'components/Button'
 import { Card } from 'components/Card'
 import { Label, Input } from 'components/Input'
 import React, { useState } from 'react'
 import Blockies from 'react-blockies'
 import { useForm } from 'react-hook-form'
-
-import { Transactor } from '../../helpers'
-import { tryToDisplay, tryToDisplayAsText } from './utils'
 
 const { utils, BigNumber } = require('ethers')
 
@@ -59,7 +55,7 @@ export default function FunctionForm({ name, contract }) {
     <div>
       <Card>
         <h3 className="text-medium mb-3 text-xl capitalize">{functionInfo.name}</h3>
-        <Col span={16}>{inputs}</Col>
+        <div span={16}>{inputs}</div>
         <PrimaryButton type="submit" onClick={handleSubmit(onSubmit)}>
           {buttonIcon}
         </PrimaryButton>
