@@ -1,8 +1,9 @@
 import { ConnectButton } from "@rainbow-me/rainbowkit"
 import Header from "components/Header"
-import FunctionForm from "components/FunctionForm";
+import ReadFunctionForm from "components/FunctionForm";
 import { Contract } from "ethers";
 import { useNetwork, useProvider, useSigner } from "wagmi";
+import { Interface } from "ethers/lib/utils";
 
 
 
@@ -588,22 +589,16 @@ const Main = () => {
     const provider = useProvider({ chainId: 1 })
 
     const address = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
-    const contract = new Contract(address, DAIABI, signer)
+    const iface = new Interface(DAIABI)
 
 
-
-
-
-
-    console
     return (<div>
-        {Object.entries(contract.interface.functions).map(([key, value]) => {
-            return <FunctionForm
+        {Object.entries(iface.functions).map(([key, value]) => {
+            return <ReadFunctionForm
                 key={key}
-                contract={contract}
-                name={value.name}
-                blockExplorer="https://etherscan.io/"
+                functionSig={iface.getFunction(value.name)}
                 chainId={1}
+                contractAddress={address}
             />
         })}
     </div>

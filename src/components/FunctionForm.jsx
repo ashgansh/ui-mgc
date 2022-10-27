@@ -1,11 +1,13 @@
 import { PrimaryButton } from 'components/Button'
 import { Card } from 'components/Card'
 import { Label, Input } from 'components/Input'
+import { Fragment } from 'ethers/lib/utils'
 import React, { useState } from 'react'
 import Blockies from 'react-blockies'
 import { useForm } from 'react-hook-form'
+import { useProvider } from 'wagmi'
 
-const { utils, BigNumber } = require('ethers')
+const { utils, BigNumber, Contract } = require('ethers')
 
 const getFunctionInputKey = (functionInfo, input, inputIndex) => {
   const name = input?.name ? input.name : 'input_' + inputIndex + '_'
@@ -14,23 +16,25 @@ const getFunctionInputKey = (functionInfo, input, inputIndex) => {
 
 const isReadable = fn => fn.stateMutability === 'view' || fn.stateMutability === 'pure'
 
-export default function FunctionForm({ name, contract }) {
-  const functionInfo = contract.interface.getFunction(name)
+export default function ReadFunctionForm({ functionSig, chainId, contractAddress }) {
+  const provider = useProvider({ chainId: chainId })
   const { register, handleSubmit, errors } = useForm()
-  console.log(functionInfo)
+  const [result, setResult] = useState()
   const onSubmit = async data => {
+    const contract = new Contract(contractAddress, [functionSig], provider)
     const params = []
     Object.keys(data).forEach(key => {
       params[key] = data[key]
     })
     console.log(params)
-    console.log(contract[name])
+    console.log(contract[functionSig.name])
 
-    const res = await contract[name](...params)
+    const res = await contract[functionSig.name](...params)
     console.log(res)
+    setResult(res)
   }
-  const inputs = functionInfo?.inputs.map((input, inputIndex) => {
-    const key = getFunctionInputKey(functionInfo, input, inputIndex)
+  const inputs = functionSig?.inputs.map((input, inputIndex) => {
+    const key = getFunctionInputKey(functionSig, input, inputIndex)
     if (input.type === 'bytes32') {
     } else if (input.type === 'bytes') {
     } else if (input.type === 'uint256') {
@@ -49,16 +53,18 @@ export default function FunctionForm({ name, contract }) {
       </div>
     )
   })
-  const buttonIcon = isReadable(functionInfo) ? 'Read📡' : 'Send💸'
+  const buttonIcon = isReadable(functionSig) ? 'Read📡' : 'Send💸'
 
   return (
     <div>
       <Card>
-        <h3 className="text-medium mb-3 text-xl capitalize">{functionInfo.name}</h3>
+        <h3 className="text-medium mb-3 text-xl capitalize">{functionSig.name}</h3>
         <div span={16}>{inputs}</div>
         <PrimaryButton type="submit" onClick={handleSubmit(onSubmit)}>
           {buttonIcon}
         </PrimaryButton>
+
+        {String(result)}
       </Card>
     </div>
   )
